@@ -1,31 +1,28 @@
-from args import args
 import math
 
 import torch
 import torch.nn as nn
 
+from args import args
 import utils.conv_type
 import utils.norm_type
 import utils.linear_type
 
 
 class Builder(object):
-    def __init__(self, conv_layer, norm_layer, linear_layer, first_layer=None):
+
+    def __init__(self, conv_layer, norm_layer, linear_layer):
         self.conv_layer = conv_layer
         self.norm_layer = norm_layer
-        self.first_layer = first_layer or conv_layer
         self.linear_layer = linear_layer
-
 
     def fc(self, in_planes, out_planes, bias=False):
         fc = self.linear_layer(in_planes, out_planes, bias)
+
         return fc
 
-    def conv(self, kernel_size, in_planes, out_planes, stride=1, first_layer=False):
-        conv_layer = self.first_layer if first_layer else self.conv_layer
-
-        if first_layer:
-            print(f"==> Building first layer with {str(self.first_layer)}")
+    def conv(self, kernel_size, in_planes, out_planes, stride=1):
+        conv_layer = self.conv_layer
 
         if kernel_size == 3:
             conv = conv_layer(
@@ -85,9 +82,8 @@ class Builder(object):
         c = self.conv(5, in_planes, out_planes, stride=stride, first_layer=first_layer)
         return c
 
-    def norm(self, planes, last_norm=False, first_layer=False):
+    def norm(self, planes):
         return self.norm_layer(planes)
-
 
     def activation(self):
         if args.nonlinearity == "relu":
@@ -160,12 +156,7 @@ def get_builder():
     conv_layer = getattr(utils.conv_type, args.conv_type)
     norm_layer = getattr(utils.norm_type, args.norm_type)
     linear_layer = getattr(utils.linear_type, args.linear_type)
-    if args.first_layer_type is not None:
-        first_layer = getattr(utils.conv_type, args.first_layer_type)
-        print(f"==> First Layer Type: {args.first_layer_type}")
-    else:
-        first_layer = None
 
-    builder = Builder(conv_layer=conv_layer, norm_layer=norm_layer, linear_layer=linear_layer, first_layer=first_layer)
+    builder = Builder(conv_layer=conv_layer, norm_layer=norm_layer, linear_layer=linear_layer)
 
     return builder
