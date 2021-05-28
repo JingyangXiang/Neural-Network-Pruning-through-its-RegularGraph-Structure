@@ -112,14 +112,6 @@ def parse_arguments():
         help="use pre-trained model",
     )
     parser.add_argument(
-        "--tokens_type",
-        dest="tokens_type",
-        default='performer',
-        type=str,
-        help="tokens type",
-        choices=['performer', 'transformer', 'convolution']
-    )
-    parser.add_argument(
         "--low-path",
         default=None,
         type=str,
@@ -146,10 +138,10 @@ def parse_arguments():
         "--lr-policy", default="constant_lr", help="Policy for the learning rate."
     )
     parser.add_argument(
-        "--multistep-lr-adjust", default=30, type=int, help="Interval to drop lr"
+        "--lr-adjust", default=30, type=int, help="Interval to drop lr"
     )
     parser.add_argument(
-        "--multistep-lr-gamma", default=0.1, type=int, help="Multistep multiplier"
+        "--lr-gamma", default=0.1, type=int, help="Multistep multiplier"
     )
     parser.add_argument(
         "--name", default=None, type=str, help="Experiment name to append to filepath"
@@ -177,11 +169,6 @@ def parse_arguments():
         default=False,
         action="store_true",
         help="Whether or not to use nesterov for SGD",
-    )
-    parser.add_argument(
-        "--random-subnet",
-        action="store_true",
-        help="Whether or not to use a random subnet when fine tuning for lottery experiments",
     )
     parser.add_argument(
         "--one-batch",
@@ -237,9 +224,6 @@ def parse_arguments():
         default=64,
     )
     parser.add_argument(
-        "--first-layer-type", type=str, default=None, help="Conv type of first layer"
-    )
-    parser.add_argument(
         "--trainer", type=str, default="default", help="cs, ss, or standard training"
     )
     parser.add_argument(
@@ -256,11 +240,6 @@ def parse_arguments():
         help='search direction'
     )
     parser.add_argument(
-        '--iter-num',
-        type=int,
-        default=1
-    )
-    parser.add_argument(
         '--interval-up',
         type=float,
         default=0.2
@@ -269,13 +248,6 @@ def parse_arguments():
         '--interval-down',
         type=float,
         default=0.01
-    )
-    parser.add_argument(
-        '--normalize',
-        type=str,
-        default='L1',
-        choices=['L1', 'L2', 'linear', 'None'],
-        help='Ways for Signal to Picture'
     )
     parser.add_argument(
         "--extreme",
@@ -292,7 +264,6 @@ def parse_arguments():
         default=None,
         help="Graph Adjacency matrix",
     )
-
     args = parser.parse_args()
 
     # Allow for use from notebook without config file

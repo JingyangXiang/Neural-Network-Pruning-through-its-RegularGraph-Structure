@@ -1,11 +1,12 @@
 import os
 
 import torch
+import torch.multiprocessing
 from torchvision import datasets, transforms
 
-import torch.multiprocessing
 
 torch.multiprocessing.set_sharing_strategy("file_system")
+
 
 class TinyImageNet:
     def __init__(self, args):

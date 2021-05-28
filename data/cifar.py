@@ -1,10 +1,9 @@
 import os
+
 import torch
 import torchvision
 from torchvision import transforms
-import random
 from torch.utils.data.sampler import SubsetRandomSampler
-from args import args
 
 
 class CIFAR10:

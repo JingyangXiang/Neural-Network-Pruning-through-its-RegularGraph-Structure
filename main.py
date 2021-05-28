@@ -2,11 +2,11 @@ import os
 import pathlib
 import random
 import time
-from ruamel import yaml
+import importlib
 import networkx as nx
 import copy
 import numpy as np
-
+from ruamel import yaml
 
 from torch.utils.tensorboard import SummaryWriter
 import torch
@@ -17,29 +17,23 @@ import torch.optim
 import torch.utils.data
 import torch.utils.data.distributed
 
+import data
+import models
+from args import args
 from utils.conv_type import FixedSubnetConv, SampleSubnetConv
 from utils.logging import AverageMeter, ProgressMeter
 from utils.net_utils import (
-    set_model_prune_rate,
     freeze_model_weights,
-    unfreeze_model_weights,
     save_checkpoint,
     get_lr,
     LabelSmoothing,
     freeze_model_subnet,
-    unfreeze_model_subnet,
     set_model_connection
 )
 from utils.schedulers import get_policy
-
 from graph.build_graph  import first_regular_graph
 from graph.optimizer import PathOptimizer
 
-from args import args
-import importlib
-
-import data
-import models
 
 def main():
     print(args)
@@ -51,8 +45,7 @@ def main():
         torch.cuda.manual_seed_all(args.seed)
 
     # Simply call main_worker function
-    for iter in range(args.iter_num):
-        main_worker(args)
+    main_worker(args)
 
 
 def main_worker(args):
@@ -365,15 +358,7 @@ def get_model(args):
     model = models.__dict__[args.arch]()
 
     # applying sparsity to the network
-    if (
-        args.conv_type != "DenseConv"
-        and args.conv_type != "SampleSubnetConv"
-        and args.conv_type != "ContinuousSparseConv"
-    ):
-        if args.prune_rate < 0:
-            raise ValueError("Need to set a positive prune rate")
 
-        set_model_prune_rate(model, prune_rate=args.prune_rate)
     global model_parameters
     model_parameters = sum(int(p.numel() * args.prune_rate) for n, p in model.named_parameters() if not n.endswith('scores'))
     print(
@@ -391,10 +376,13 @@ def get_model(args):
         args.matrix = np.load(args.matrix)
     else:
         args.matrix = PathOptimizer(args.matrix)
+
     if args.set_connection:
         set_model_connection(model, args.matrix)
+
     if args.freeze_subnet:
         freeze_model_subnet(model)
+
     return model
 
 
@@ -449,6 +437,7 @@ def get_optimizer(args, model):
             filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr,
             weight_decay=args.weight_decay
         )
+
     return optimizer
 
 

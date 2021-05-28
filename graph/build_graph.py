@@ -1,9 +1,5 @@
 import networkx as nx
-import matplotlib.pyplot as plt
-import random
-from random import choice
 import numpy as np
-import tqdm
 
 # 生成具有脉冲分布的图,随机的
 def regular(degree,nodes):
@@ -23,11 +19,12 @@ def regular(degree,nodes):
 
 # 生成具有脉冲分布的图,手动构建
 def first_regular_graph(degree, nodes):
-    # 必须保证都是偶数,不然没法构建这种图
+
     assert degree%2==0 and nodes%2==0
     matrix = np.zeros([nodes,nodes])
     for line in range(matrix.shape[0]):
         for D in range(-degree//2,degree//2+1):
             matrix[line, (line+D)%nodes] = 1
     matrix = matrix - np.diag(np.ones(nodes))
+
     return matrix

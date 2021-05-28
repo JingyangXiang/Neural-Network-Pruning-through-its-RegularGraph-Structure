@@ -1,7 +1,9 @@
 import os
+
 import torch
 import torchvision
 from torchvision import transforms
+
 
 class SVHN:
     def __init__(self, args):
