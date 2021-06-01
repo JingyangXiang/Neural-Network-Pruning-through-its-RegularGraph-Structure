@@ -2,7 +2,7 @@
 arch: cResNet18 
 
 # ===== Dataset ===== #
-data: /public/xjy2/ImageProject/data
+data: /datadir/datasets/
 set: CIFAR10
 name: baseline
 

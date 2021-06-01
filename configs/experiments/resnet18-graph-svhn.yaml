@@ -2,7 +2,7 @@
 arch: cResNet18 
 
 # ===== Dataset ===== #
-data: /public/xjy2/ImageProject/data
+data: /datadir/datasets/
 set: SVHN
 name: baseline
 num_classes: 10

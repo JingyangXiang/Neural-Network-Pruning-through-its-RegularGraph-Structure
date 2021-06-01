@@ -1,16 +1,16 @@
 # Architecture
-arch: ResNet18 
+arch: vgg16_bn
 
 # ===== Dataset ===== #
 data: /datadir/datasets/
-set: TinyImageNet
+set: CIFAR10
 name: baseline
-num_classes: 200
 
 # ===== Learning Rate Policy ======== #
 optimizer: sgd
 lr: 0.1
 lr_policy: cosine_lr
+trainer: amp
 
 # ===== Network training config ===== #
 epochs: 100
@@ -24,7 +24,6 @@ bn_type: LearnedBatchNorm
 init: kaiming_normal
 mode: fan_in
 nonlinearity: relu
-prune_rate: 1.
 
 # ===== Hardware setup ===== #
-workers: 8
+workers: 4

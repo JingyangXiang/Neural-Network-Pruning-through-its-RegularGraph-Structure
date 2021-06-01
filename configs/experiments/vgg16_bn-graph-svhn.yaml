@@ -1,10 +1,11 @@
 # Architecture
-arch: cResNet18v
+arch: vgg16_bn 
 
 # ===== Dataset ===== #
-data: /public/xjy2/ImageProject/data
-set: CIFAR10
+data: /datadir/datasets/
+set: SVHN
 name: baseline
+num_classes: 10
 
 # ===== Learning Rate Policy ======== #
 optimizer: sgd
@@ -17,7 +18,6 @@ epochs: 100
 weight_decay: 0.0005
 momentum: 0.9
 batch_size: 256
-trainer: amp
 
 # ===== Sparsity =========== #
 conv_type: GraphConv2D
@@ -25,8 +25,6 @@ bn_type: LearnedBatchNorm
 init: kaiming_normal
 mode: fan_in
 nonlinearity: relu
-first_layer_dense: True
-last_layer_dense: True
 
 # ===== Hardware setup ===== #
 workers: 4

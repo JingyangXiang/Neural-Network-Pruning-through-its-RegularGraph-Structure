@@ -1,5 +1,5 @@
 # Architecture
-arch: ResNet18 
+arch: vgg16_bn
 
 # ===== Dataset ===== #
 data: /datadir/datasets/
