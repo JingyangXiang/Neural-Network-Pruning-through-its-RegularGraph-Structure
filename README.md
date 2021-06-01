@@ -16,8 +16,7 @@ We use config files located in the  ```configs/``` folder to organize our experi
 To train the model(s) in the paper, run this command:
 
 ```train
-python train.py --config <path_to_config> \
-<override-args>
+python train.py --config <path_to_config> <override-args>
 ```
 Common example ```override-args```include ```--multigpu=<gpu-ids seperated by commas, no spaces>```to run on GPUs for an experiment. Run ```python main --help```for more details.
 
@@ -59,6 +58,13 @@ python main.py --config configs/baselines/resnet18-graph-cifar100.yaml \
 ```sh
 bash orders\experiment\64_4.sh <dataset> <id(s)_to_device> <arch>
 ```
+### Tracking
+
+```
+tensorboard --logdir runs/ --bind_all
+```
+
+When your experiment is done, a CSV entry will be written (or appended) to ```runs/results.csv```. Your experiment base directory will automatically be written to ```runs/<config-name>/<experiment-name>```with ```checkpoints/```and ```logs/```subdirectories. If your experiment happens to match a previously created experiment base directory then an integer increment will be added to the filepath (eg. ```/0```, ```/1```, etc.). Checkpoints by default will have the first, best, and last models. To change this behavior, use the ```--save-every```flag. 
 
 ## Key Codes
 Accord to paper **[Graph Structure of Neural Networks](https://arxiv.org/abs/2007.06559)**
@@ -111,15 +117,14 @@ class GraphConv2D(nn.Conv2d):
 
 You can download pretrained models pretrained on ImageNet here:
 
-### [Image Classification on ImageNet](https://paperswithcode.com/sota/image-classification-on-imagenet)
-
+#### Image Classification on ImageNet
 |Model name|    Top 1 Accuracy  |Top 5 Accuracy |Params Remain    | FlOPs Remain|
 |---|---------------- | -------------- |  -------------- |  ----------- |
-| [ResNet50 64_36]()|75.30%|92.55%|$\approx$ 56.25%|$\approx$ 56.25%|
-| [ResNet50 64_30]()|74.58%|92.09%|$\approx$ 46.88%|$\approx$ 46.88%|
-| [ResNet50 64_26]()|||$\approx$ 40.63%|$\approx$ 40.63%|
-| [ResNet50 64_24]()|74.07%|91.86%|$\approx$ 37.50%|$\approx$ 37.50%|
-| [ResNet50 64_16]()|72.68%|91.06%|$\approx$ 25.00%|$\approx$ 25.00%|
+| [ResNet50 baseline](https://drive.google.com/file/d/1dw_03RKxFBJhs5pRgNWipI6NqXNJ8nIZ/view?usp=sharing)|76.22%|93.00%|100%|100%|
+| [ResNet50 64_36](https://drive.google.com/file/d/1WCcKSta30CW2JDwO7M0BldO-gIKYEf82/view?usp=sharing)|75.30%|92.55%|$\approx$ 56.25%|$\approx$ 56.25%|
+| [ResNet50 64_30](https://drive.google.com/file/d/1g041RIsT7QEcOGavxzEJFpZQQqZRURSS/view?usp=sharing)|74.58%|92.09%|$\approx$ 46.88%|$\approx$ 46.88%|
+| [ResNet50 64_24](https://drive.google.com/file/d/1F83hsPQP9qyhq0NdLE0urSJKiGI0E7FW/view?usp=sharing)|74.07%|91.86%|$\approx$ 37.50%|$\approx$ 37.50%|
+| [ResNet50 64_16](https://drive.google.com/file/d/1RCRj9uxLKpMjSTJ6Vi16cdIIrd4apZnM/view?usp=sharing)|72.68%|91.06%|$\approx$ 25.00%|$\approx$ 25.00%|
 
 ## Matrix
 You can find details of adjacency matrix in the ```Adjacency/*/*/*.csv```,the informations of average shortest path, clustering coefficient and transitivity.

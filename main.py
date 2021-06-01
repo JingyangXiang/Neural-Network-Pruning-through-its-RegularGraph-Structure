@@ -193,28 +193,6 @@ def main_worker(args):
             writer, prefix="diagnostics", global_step=epoch
         )
 
-        if args.conv_type == "SampleSubnetConv":
-            count = 0
-            sum_pr = 0.0
-            for n, m in model.named_modules():
-                if isinstance(m, SampleSubnetConv):
-                    # avg pr across 10 samples
-                    pr = 0.0
-                    for _ in range(10):
-                        pr += (
-                            (torch.rand_like(m.clamped_scores) >= m.clamped_scores)
-                            .float()
-                            .mean()
-                            .item()
-                        )
-                    pr /= 10.0
-                    writer.add_scalar("pr/{}".format(n), pr, epoch)
-                    sum_pr += pr
-                    count += 1
-
-            args.prune_rate = sum_pr / count
-            writer.add_scalar("pr/average", args.prune_rate, epoch)
-
         writer.add_scalar("test/lr", cur_lr, epoch)
         end_epoch = time.time()
     if args.conv_type == 'DenseConv':
@@ -238,7 +216,6 @@ def main_worker(args):
         best_acc5=best_acc5,
         best_train_acc1=best_train_acc1,
         best_train_acc5=best_train_acc5,
-        prune_rate=args.prune_rate,
         curr_acc1=acc1,
         curr_acc5=acc5,
         base_config=args.config,
@@ -359,23 +336,15 @@ def get_model(args):
 
     # applying sparsity to the network
 
-    global model_parameters
-    model_parameters = sum(int(p.numel() * args.prune_rate) for n, p in model.named_parameters() if not n.endswith('scores'))
-    print(
-        f"=> Rough estimate model params {model_parameters}"
-    )
     # freezing the weights if we are only doing subnet training
     if args.freeze_weights:
         freeze_model_weights(model)
-    if args.matrix is None:
-        degree = int(args.nodes * args.prune_rate)
-        args.matrix = first_regular_graph(degree, args.nodes)
-        print('===> Fisrt Generate Matrix')
-    elif os.path.isfile(args.matrix):
+
+    if os.path.isfile(args.matrix):
         print('==> load the matrix')
         args.matrix = np.load(args.matrix)
     else:
-        args.matrix = PathOptimizer(args.matrix)
+        raise ValueError("Matrix is need to be given")
 
     if args.set_connection:
         set_model_connection(model, args.matrix)
@@ -455,11 +424,11 @@ def get_directories(args):
     config = pathlib.Path(args.config).stem
     if args.log_dir is None:
         run_base_dir = pathlib.Path(
-            f"runs/{config}/{args.name}/prune_rate={args.prune_rate}"
+            f"runs/{config}/{args.name}"
         )
     else:
         run_base_dir = pathlib.Path(
-            f"{args.log_dir}/{config}/{args.name}/prune_rate={args.prune_rate}"
+            f"{args.log_dir}/{config}/{args.name}"
         )
     if args.width_mult != 1.0:
         run_base_dir = run_base_dir / "width_mult={}".format(str(args.width_mult))
@@ -492,7 +461,6 @@ def write_result_to_csv(**kwargs):
             "Batch Size, "
             "Base Config, "
             "Name, "
-            "Prune Rate, "
             "Current Val Top 1, "
             "Current Val Top 5, "
             "Best Val Top 1, "
@@ -528,7 +496,6 @@ def write_result_to_csv(**kwargs):
                 "{batch_size}, "
                 "{base_config}, "
                 "{name}, "
-                "{prune_rate}, "
                 "{curr_acc1:.02f}, "
                 "{curr_acc5:.02f}, "
                 "{best_acc1:.02f}, "
