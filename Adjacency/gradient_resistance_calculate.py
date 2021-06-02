@@ -9,8 +9,11 @@ import matplotlib.pyplot as plt
 def gradient_infuence_cal(matrix):
     assert matrix.shape[0] == matrix.shape[1]
     nodes = matrix.shape[0]
-    collects = []
+    # record one nodes need how many steps could influence whole graph
+    steps = []
+    # record when nodes influeces whole graph, how many nodes it influences totally
     influences = []
+
     for node in range(nodes):
         temp = 0.
         influence = 0
@@ -25,13 +28,13 @@ def gradient_infuence_cal(matrix):
             index = index + 1
             if index > 100:
                 break
-        collects.append(index)
+        steps.append(index)
         influences.append(temp)
-    return np.max(collects), np.mean(collects), influences, collects
+
+    return np.max(steps), np.mean(steps), influences, steps
 
 
 def write_result_to_csv(path_to_csv,**kwargs):
-
     results = pathlib.Path(path_to_csv) / f"{nodes}_{int(degree)}_information.csv"
 
     if not results.exists():
@@ -63,8 +66,8 @@ def write_result_to_csv(path_to_csv,**kwargs):
                 "{clustering}, "
                 "{tranvity}, "
                 "{diameter}, "
-                "{gradient_infuence_max}, "
-                "{gradient_infuence_mean}, "
+                "{step_max}, "
+                "{step_mean}, "
                 "{relation_mean}, "
                 "{relation}\n"
             ).format(now=now, **kwargs)
@@ -74,37 +77,37 @@ def write_result_to_csv(path_to_csv,**kwargs):
 nodes = 64
 layers_num = 15
 channels = 64
-Adjancy_Nodes_Path = f'{nodes}'
-Adjancy_Nodes_Degrees_path = [os.path.join(Adjancy_Nodes_Path, degree) for degree in os.listdir(Adjancy_Nodes_Path)]
+NodesPath = f'{nodes}'
+Nodes_Degrees_path = [os.path.join(NodesPath, degree) for degree in os.listdir(NodesPath)]
 
-for degree in Adjancy_Nodes_Degrees_path:
+path_to_csv = 'matrix'
+if not os.path.exists(path_to_csv):
+    os.mkdir(path_to_csv)
+
+for degree in Nodes_Degrees_path:
     matrixs = [os.path.join(degree, matrix) for matrix in os.listdir(degree)]
-    steps = []
-    channels_collects = []
+    steps_collecter = []
+    channels_collecter = []
     for matrix_path in matrixs:
         if os.path.isfile(matrix_path) and 'npy' in matrix_path:
             matrix = np.load(matrix_path)
 
             node = nodes
             degree = np.sum(matrix)//node
-            # ====================================
             graph = nx.from_numpy_matrix(matrix)
             average_shortest_path = nx.average_shortest_path_length(graph)
             clustering = nx.average_clustering(graph)
             tranvity = nx.transitivity(graph)
             diameter = nx.diameter(graph)
-            gradient_infuence_max, gradient_infuence_mean, influences, collects \
-                = gradient_infuence_cal(matrix)
-            path_to_csv = 'matrix'
+
+            step_max, step_mean, influences, steps = gradient_infuence_cal(matrix)
+
             relation = []
             channels_collect = []
-            for index, (influence, collect) in enumerate(zip(influences, collects)):
+            for index, (influence, collect) in enumerate(zip(influences, steps)):
                 relation.append(f'{collect}:{(layers_num - collect)*channels + influence}')
                 channels_collect.append((layers_num - collect)*channels + influence)
 
-            if not os.path.exists(path_to_csv):
-                os.mkdir(path_to_csv)
-            # ====================================
             write_result_to_csv(
                 path_to_csv=path_to_csv,
                 path=matrix_path,
@@ -113,16 +116,17 @@ for degree in Adjancy_Nodes_Degrees_path:
                 average_shortest_path=average_shortest_path,
                 degree=int(np.sum(matrix)//matrix.shape[0]),
                 nodes=matrix.shape[0],
-                gradient_infuence_max=gradient_infuence_max,
-                gradient_infuence_mean=gradient_infuence_mean,
+                step_max=step_max,
+                step_mean=step_mean,
                 diameter=diameter,
                 relation_mean=np.mean(channels_collect),
                 relation=relation
             )
-            steps.extend(collects)
-            channels_collects.extend(channels_collect)
-    plt.scatter(steps, channels_collects)
+            steps_collecter.extend(steps)
+            channels_collecter.extend(channels_collect)
+
+    plt.scatter(steps_collecter, channels_collecter)
     plt.xlabel('steps')
     plt.ylabel('channels')
-    plt.savefig(f'matrix\\{nodes}_{int(degree)}.pdf')
+    plt.savefig(f'matrix//{nodes}_{int(degree)}.pdf')
     plt.close()

@@ -17,6 +17,7 @@ def GraphGenerator(degree,nodes,matrix=None,**kwargs):
     matrix = PathOptimizer(matrix)
     return matrix
 
+
 def get_path(path):
     global i
     i = 0
