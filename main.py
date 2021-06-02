@@ -20,7 +20,6 @@ import torch.utils.data.distributed
 import data
 import models
 from args import args
-from utils.conv_type import FixedSubnetConv, SampleSubnetConv
 from utils.logging import AverageMeter, ProgressMeter
 from utils.net_utils import (
     freeze_model_weights,
@@ -31,8 +30,6 @@ from utils.net_utils import (
     set_model_connection
 )
 from utils.schedulers import get_policy
-from graph.build_graph  import first_regular_graph
-from graph.optimizer import PathOptimizer
 
 
 def main():
@@ -222,6 +219,7 @@ def main_worker(args):
         name=args.name,
         conv_type=args.conv_type,
         norm_type=args.norm_type,
+        linear_type=args.linear_type,
         degree=np.sum(args.matrix)/args.matrix.shape[0],
         path=path,
         clustering=clustering,
@@ -230,14 +228,12 @@ def main_worker(args):
         freeze_subnet=args.freeze_subnet,
         freeze_weights=args.freeze_weights,
         trainer=args.trainer,
-        model_parameters=model_parameters,
         best_time=best_time,
         batch_size=args.batch_size,
-        model_optimizer=args.optimizer,
+        optimizer=args.optimizer,
         weight_decay=args.weight_decay,
         set=args.set,
         run_base_dir=run_base_dir,
-        linear_type=args.linear_type
     )
 
 
@@ -315,10 +311,6 @@ def pretrained(args, model):
     else:
         print("=> no pretrained weights found at '{}'".format(args.pretrained))
 
-    for n, m in model.named_modules():
-        if isinstance(m, FixedSubnetConv):
-            m.set_subnet()
-
 
 def get_dataset(args):
     print(f"=> Getting {args.set} dataset")
@@ -331,10 +323,10 @@ def get_model(args):
     if args.first_layer_dense:
         args.first_layer_type = "DenseConv"
 
-    print("=> Creating model '{}'".format(args.arch))
+    print("==> Creating model '{}'".format(args.arch))
     model = models.__dict__[args.arch]()
 
-    # applying sparsity to the network
+
 
     # freezing the weights if we are only doing subnet training
     if args.freeze_weights:
@@ -348,9 +340,11 @@ def get_model(args):
     else:
         raise ValueError("Matrix is need to be given")
 
+    # applying sparsity to the network
     if args.set_connection:
         set_model_connection(model, args.matrix)
 
+    # we don't train subnet with weights,so make sure args.freeze_subnet is True
     if args.freeze_subnet:
         freeze_model_subnet(model)
 
@@ -480,13 +474,11 @@ def write_result_to_csv(**kwargs):
             "Tranvity, "
             "Arch, "
             "Trainer, "
-            "Parameters, "
-            "Optimizers, "
+            "Optimizer, "
             "WeightDecay, "
             "Run Base Dir, "
             "Arch, , "
             "Linear Type\n"
-
         )
 
     now = time.strftime("%m-%d-%y_%H:%M:%S")
@@ -515,8 +507,7 @@ def write_result_to_csv(**kwargs):
                 "{tranvity}, "
                 "{arch}, "
                 "{trainer}, "
-                "{model_parameters}, "
-                "{model_optimizer}, "
+                "{optimizer}, "
                 "{weight_decay}, "
                 "{run_base_dir},"
                 "{linear_type}\n"

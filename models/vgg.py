@@ -1,12 +1,11 @@
 import torch.nn as nn
-from utils.builder import get_builder
+
 from args import args
+from utils.builder import get_builder
 
 
 class VGG(nn.Module):
-    '''
-    VGG model
-    '''
+    '''VGG model'''
     def __init__(self, builder, features):
         super(VGG, self).__init__()
 
@@ -24,11 +23,10 @@ class VGG(nn.Module):
         else:
             self.classifier.add_module('classifier', builder.conv1x1(512, args.num_classes))
 
-         # Initialize weights
-
     def forward(self, x):
         x = self.features(x)
         x = self.classifier(x).view(x.size(0), -1)
+
         return x
 
 
@@ -99,15 +97,3 @@ def vgg19():
 def vgg19_bn():
     """VGG 19-layer model (configuration 'E') with batch normalization"""
     return VGG(get_builder(), make_layers(cfg['E'], get_builder(), batch_norm=True))
-
-
-# if __name__ == '__main__':
-#     args.conv_type = "GraphConv2D"
-#     args.bn_type = "NonAffineBatchNorm"
-#     args.nodes = 16
-#     args.first_layer_dense = True
-#     args.last_layer_dense = True
-#     model = vgg19()
-#     data = torch.randn(1, 3, 224, 224)
-#     out = model(data)
-#     print(out.shape)

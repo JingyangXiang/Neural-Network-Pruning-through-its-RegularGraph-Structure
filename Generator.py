@@ -1,13 +1,15 @@
-import networkx as nx
-import matplotlib.pyplot as plt
+import os
 import time
-from functools import cmp_to_key
+import pathlib
 import numpy as np
+import networkx as nx
+from functools import cmp_to_key
+
 from graph.regular import  first_regular_graph,last_regular_graph
 from graph.optimizer import PathOptimizer
-import os
+
 from args import args
-import pathlib
+
 
 def GraphGenerator(degree,nodes,matrix=None,**kwargs):
     # 根据指定的图生成器生成所需要的邻接矩阵
@@ -17,7 +19,7 @@ def GraphGenerator(degree,nodes,matrix=None,**kwargs):
         # args.matrix是全局变量,讲道理来说幅值一次就全局改变了
         print('===>Fist generate the matrix')
         matrix = first_regular_graph(degree, nodes)
-    # 优化平均最短路径
+    # optimizer average shortest path length
     matrix = PathOptimizer(matrix)
     return matrix
 
@@ -43,7 +45,6 @@ def compare(x1,x2):
         return -1
 
 def write_result_to_csv(path_to_csv,**kwargs):
-    print(kwargs)
     results = pathlib.Path(path_to_csv) / f"{args.nodes}_{degree}_information.csv"
 
     if not results.exists():
@@ -109,7 +110,7 @@ for degree in range(MIN,MAX+1,2):
                 print(f'{index}: {nx.average_shortest_path_length(graph)}')
                 matrix = GraphGenerator(degree, args.nodes, matrix)
 
-    # 排序-->重命名-->展示分布
+    # sort-->rename
     dirs = os.listdir(files)
     if not os.path.isfile(os.path.join(files, f'M0.npy')):
         for i in range(len(dirs)):
@@ -126,7 +127,7 @@ for degree in range(MIN,MAX+1,2):
 
     dirs_sorted = sorted(dirs,key=cmp_to_key(compare))
     for dir in dirs_sorted:
-        # 记录属性
+        # record characteristc
         matrix = np.load(f'{dir}')
         graph = nx.from_numpy_matrix(matrix)
         path = nx.average_shortest_path_length(graph)
@@ -142,14 +143,3 @@ for degree in range(MIN,MAX+1,2):
             degree=np.sum(matrix)//matrix.shape[0],
             nodes=matrix.shape[0]
         )
-
-
-
-
-
-
-
-
-
-
-

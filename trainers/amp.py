@@ -2,9 +2,12 @@ import time
 import torch
 import tqdm
 
+
+from torch.cuda.amp import autocast, GradScaler
+
+
 from utils.eval_utils import accuracy
 from utils.logging import AverageMeter, ProgressMeter
-from torch.cuda.amp import autocast, GradScaler
 
 
 __all__ = ["train", "validate", "modifier"]
@@ -41,9 +44,8 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         target = target.cuda(args.gpu, non_blocking=True)
         # amp
         with autocast():
-        # compute output
+            # compute output
             output = model(images)
-
             loss = criterion(output, target)
 
         scaler.scale(loss).backward()
@@ -55,8 +57,6 @@ def train(train_loader, model, criterion, optimizer, epoch, args, writer):
         losses.update(loss.item(), images.size(0))
         top1.update(acc1.item(), images.size(0))
         top5.update(acc5.item(), images.size(0))
-
-        # loss.backward()
 
         # measure elapsed time
         batch_time.update(time.time() - end)
@@ -116,6 +116,7 @@ def validate(val_loader, model, criterion, args, writer, epoch):
             progress.write_to_tensorboard(writer, prefix="test", global_step=epoch)
 
     return top1.avg, top5.avg
+
 
 def modifier(args, epoch, model):
     return

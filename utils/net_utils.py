@@ -99,15 +99,6 @@ def unfreeze_model_subnet(model):
             m.scores.requires_grad = True
 
 
-def set_model_prune_rate(model, prune_rate):
-    print(f"==> Setting prune rate of network to {prune_rate}")
-
-    for n, m in model.named_modules():
-        if hasattr(m, "set_prune_rate"):
-            m.set_prune_rate(prune_rate)
-            print(f"==> Setting prune rate of {n} to {prune_rate}")
-
-
 def accumulate(model, f):
     acc = 0.0
 
@@ -141,4 +132,5 @@ class LabelSmoothing(nn.Module):
         nll_loss = nll_loss.squeeze(1)
         smooth_loss = -logprobs.mean(dim=-1)
         loss = self.confidence * nll_loss + self.smoothing * smooth_loss
+
         return loss.mean()

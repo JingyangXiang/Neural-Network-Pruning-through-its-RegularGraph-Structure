@@ -1,9 +1,14 @@
+"""
+https://github.com/lmbxmu/HRank/blob/master/models/resnet_cifar.py, we change its name to resnet56.py
+"""
 import torch.nn as nn
 import torch.nn.functional as F
-from utils.builder import get_builder
-from args import args
 
-def adapt_channel(compress_rate, num_layers):
+from args import args
+from utils.builder import get_builder
+
+
+def adapt_channel(num_layers):
     if num_layers==56:
         stage_repeat = [9, 9, 9]
         stage_out_channel = [16] + [16] * 9 + [32] * 9 + [64] * 9
@@ -27,6 +32,7 @@ def adapt_channel(compress_rate, num_layers):
             mid_channel += [int(stage_out_channel[i])]
 
     return overall_channel, mid_channel
+
 
 class LambdaLayer(nn.Module):
     def __init__(self, lambd):
@@ -63,13 +69,6 @@ class BasicBlock(nn.Module):
                 self.shortcut = LambdaLayer(
                     lambda x: F.pad(x[:, :, :, :],
                                     (0, 0, 0, 0, (planes-inplanes)//2, planes-inplanes-(planes-inplanes)//2), "constant", 0))
-            #self.shortcut = LambdaLayer(
-            #    lambda x: F.pad(x[:, :, ::2, ::2], (0, 0, 0, 0, planes//4, planes//4),"constant", 0))
-
-            '''self.shortcut = nn.Sequential(
-                conv1x1(inplanes, planes, stride=stride),
-                #nn.BatchNorm2d(planes),
-            )#'''
 
     def forward(self, x):
         out = self.conv1(x)
@@ -79,7 +78,6 @@ class BasicBlock(nn.Module):
         out = self.conv2(out)
         out = self.bn2(out)
 
-        #print(self.stride, self.inplanes, self.planes, out.size(), self.shortcut(x).size())
         out += self.shortcut(x)
         out = self.relu2(out)
 
@@ -87,13 +85,13 @@ class BasicBlock(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, num_layers, builder, compress_rate=0):
+    def __init__(self, block, num_layers, builder):
         super(ResNet, self).__init__()
         assert (num_layers - 2) % 6 == 0, 'depth should be 6n+2'
         n = (num_layers - 2) // 6
 
         self.num_layer = num_layers
-        self.overall_channel, self.mid_channel = adapt_channel(compress_rate, num_layers)
+        self.overall_channel, self.mid_channel = adapt_channel(num_layers)
 
         self.layer_num = 0
         self.conv1 = nn.Conv2d(3, self.overall_channel[self.layer_num], kernel_size=3, stride=1, padding=1,
@@ -103,7 +101,6 @@ class ResNet(nn.Module):
         self.layers = nn.ModuleList()
         self.layer_num += 1
 
-        #self.layers = nn.ModuleList()
         self.layer1 = self._make_layer(block, blocks_num=n, stride=1, builder=builder)
         self.layer2 = self._make_layer(block, blocks_num=n, stride=2, builder=builder)
         self.layer3 = self._make_layer(block, blocks_num=n, stride=2, builder=builder)
@@ -152,8 +149,9 @@ class ResNet(nn.Module):
         return x
 
 
-def resnet_56():
+def resnet56():
     return ResNet(BasicBlock, 56, builder=get_builder())
 
-def resnet_110():
+
+def resnet110():
     return ResNet(BasicBlock, 110, builder=get_builder())

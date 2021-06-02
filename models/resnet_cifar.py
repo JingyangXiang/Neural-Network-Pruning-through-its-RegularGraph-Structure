@@ -4,14 +4,13 @@ Reference:
 [1] Kaiming He, Xiangyu Zhang, Shaoqing Ren, Jian Sun
     Deep Residual Learning for Image Recognition. arXiv:1512.03385
 """
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from utils.builder import get_builder
 from args import args
+from utils.builder import get_builder
 
-# BasicBlock {{{
+
 class BasicBlock(nn.Module):
     expansion = 1
 
@@ -34,6 +33,7 @@ class BasicBlock(nn.Module):
         out = self.bn2(self.conv2(out))
         out += self.shortcut(x)
         out = F.relu(out)
+
         return out
 
 
@@ -104,17 +104,12 @@ class ResNet(nn.Module):
         out = self.layer4(out)
         out = self.avgpool(out)
         out = self.fc(out)
+
         return out.flatten(1)
 
 
 def cResNet18():
     return ResNet(get_builder(), BasicBlock, [2, 2, 2, 2])
-
-def WidecResNet18_4():
-    return ResNet(get_builder(), BasicBlock, [2, 2, 2, 2], base_width=64 *4)
-
-def WidecResNet18_2():
-    return ResNet(get_builder(), BasicBlock, [2, 2, 2, 2], base_width=64 *2)
 
 
 def cResNet34():
@@ -131,14 +126,3 @@ def cResNet101():
 
 def cResNet152():
     return ResNet(get_builder(), Bottleneck, [3, 8, 36, 3])
-
-# if __name__ == '__main__':
-#     args.conv_type = "GraphConv2D"
-#     args.bn_type = "NonAffinenorm"
-#     args.nodes = 16
-#     args.first_layer_dense = True
-#     args.last_layer_dense = True
-#     model = cResNet18()
-#     data = torch.randn(1,3,224,224)
-#     out = model(data)
-#     print(out.shape)

@@ -32,6 +32,7 @@ def gradient_infuence_cal(matrix):
         influences.append(temp)
     return np.max(collects), np.mean(collects), influences, collects
 
+
 def write_result_to_csv(path_to_csv,**kwargs):
 
     results = pathlib.Path(path_to_csv) / f"{nodes}_{int(degree)}_information.csv"
@@ -78,7 +79,7 @@ layers_num = 15
 channels = 64
 Adjancy_Nodes_Path = f'Adjacency/{nodes}'
 Adjancy_Nodes_Degrees_path = [os.path.join(Adjancy_Nodes_Path, degree) for degree in os.listdir(Adjancy_Nodes_Path)]
-# 只保留文件夹
+
 for degree in Adjancy_Nodes_Degrees_path:
     matrixs = [os.path.join(degree, matrix) for matrix in os.listdir(degree)]
     steps = []
@@ -86,7 +87,7 @@ for degree in Adjancy_Nodes_Degrees_path:
     for matrix_path in matrixs:
         if os.path.isfile(matrix_path) and 'npy' in matrix_path:
             matrix = np.load(matrix_path)
-            # matrix = matrix + np.eye(nodes)
+
             node = nodes
             degree = np.sum(matrix)//node
             # ====================================

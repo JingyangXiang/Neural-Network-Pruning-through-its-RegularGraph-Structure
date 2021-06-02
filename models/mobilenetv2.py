@@ -1,8 +1,9 @@
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils.builder import get_builder
+
 from args import args
+from utils.builder import get_builder
+
 
 class Block(nn.Module):
     '''expand + depthwise + pointwise'''
@@ -82,16 +83,9 @@ class MobileNet(nn.Module):
         # NOTE: change pooling kernel_size 7 -> 4 for CIFAR10
         out = F.adaptive_avg_pool2d(out, 1)
         out = out.view(out.size(0), -1, 1, 1)
-        print(out.shape)
         out = self.classifier(out)
         return out.squeeze()
 
+
 def MobileNetV2():
     return MobileNet(get_builder())
-
-# args.conv_type = "DenseConv"
-# args.bn_type = "NonAffineBatchNorm"
-# net = MobileNetV2()
-# x = torch.randn(2,3,224,224)
-# y = net(x)
-# print(y.size())

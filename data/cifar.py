@@ -3,7 +3,6 @@ import os
 import torch
 import torchvision
 from torchvision import transforms
-from torch.utils.data.sampler import SubsetRandomSampler
 
 
 class CIFAR10:

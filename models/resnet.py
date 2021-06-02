@@ -1,9 +1,9 @@
 import torch.nn as nn
-import torch
-from utils.builder import get_builder
+
 from args import args
-import models
-# BasicBlock {{{
+from utils.builder import get_builder
+
+
 class BasicBlock(nn.Module):
     M = 2
     expansion = 1
@@ -44,9 +44,6 @@ class BasicBlock(nn.Module):
         return out
 
 
-# BasicBlock }}}
-
-# Bottleneck {{{
 class Bottleneck(nn.Module):
     M = 3
     expansion = 4
@@ -88,11 +85,8 @@ class Bottleneck(nn.Module):
         return out
 
 
-# Bottleneck }}}
-
-# ResNet {{{
 class ResNet(nn.Module):
-    def __init__(self, builder, block, layers, num_classes=1000, base_width=64):
+    def __init__(self, builder, block, layers, base_width=64):
         self.inplanes = 64
         super(ResNet, self).__init__()
         self.base_width = base_width
@@ -116,11 +110,10 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(builder, block, 512, layers[3], stride=2)
         self.avgpool = nn.AdaptiveAvgPool2d(1)
 
-        # self.fc = nn.Linear(512 * block.expansion, num_classes)
         if args.last_layer_dense:
             self.fc = nn.Conv2d(512 * block.expansion, args.num_classes, 1)
         else:
-            self.fc = builder.conv1x1(512 * block.expansion, num_classes)
+            self.fc = builder.conv1x1(512 * block.expansion, args.num_classes)
 
     def _make_layer(self, builder, block, planes, blocks, stride=1):
         downsample = None
@@ -163,37 +156,26 @@ class ResNet(nn.Module):
         return x
 
 
-# ResNet }}}
-def ResNet18(pretrained=False):
-    return ResNet(get_builder(), BasicBlock, [2, 2, 2, 2], 1000)
+
+def ResNet18():
+    return ResNet(get_builder(), BasicBlock, [2, 2, 2, 2])
 
 
-def ResNet50(pretrained=False):
-    return ResNet(get_builder(), Bottleneck, [3, 4, 6, 3], 1000)
+def ResNet50():
+    return ResNet(get_builder(), Bottleneck, [3, 4, 6, 3])
 
 
-def ResNet101(pretrained=False):
-    return ResNet(get_builder(), Bottleneck, [3, 4, 23, 3], 1000)
+def ResNet101():
+    return ResNet(get_builder(), Bottleneck, [3, 4, 23, 3])
 
 
-def WideResNet50_2(pretrained=False):
+def WideResNet50_2():
     return ResNet(
-        get_builder(), Bottleneck, [3, 4, 6, 3], num_classes=1000, base_width=64 * 2
+        get_builder(), Bottleneck, [3, 4, 6, 3], base_width=64 * 2
     )
 
 
-def WideResNet101_2(pretrained=False):
+def WideResNet101_2():
     return ResNet(
-        get_builder(), Bottleneck, [3, 4, 23, 3], num_classes=1000, base_width=64 * 2
+        get_builder(), Bottleneck, [3, 4, 23, 3], base_width=64 * 2
     )
-
-# if __name__ == '__main__':
-#     args.conv_type = "GraphConv2D"
-#     args.bn_type = "NonAffineBatchNorm"
-#     args.nodes = 16
-#     args.first_layer_dense = True
-#     args.last_layer_dense = True
-#     model = ResNet18()
-#     data = torch.randn(1,3,224,224)
-#     out = model(data)
-#     print(out.shape)

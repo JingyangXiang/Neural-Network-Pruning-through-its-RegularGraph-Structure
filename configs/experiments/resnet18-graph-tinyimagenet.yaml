@@ -24,7 +24,6 @@ bn_type: LearnedBatchNorm
 init: kaiming_normal
 mode: fan_in
 nonlinearity: relu
-prune_rate: 1.
 
 # ===== Hardware setup ===== #
 workers: 8
