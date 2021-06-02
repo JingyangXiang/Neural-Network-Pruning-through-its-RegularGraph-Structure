@@ -160,7 +160,7 @@ You can find details of adjacency matrix in the ```Adjacency/*/*/*.csv```,the in
 
 ## License
 
-**RPG** is released under the MIT license. Please see the [LICENSE](LICENSE) file for more information.
+**RGP** is released under the MIT license. Please see the [LICENSE](LICENSE) file for more information.
 ## Requirements
 
 Python 3.7.9, CUDA Version 10.1,CUDNN Version 7.6.5:
