@@ -1,13 +1,14 @@
-import networkx as nx
 import numpy as np
+import networkx as nx
 
-# 生成具有脉冲分布的图,随机的
+
+# get random regular graph
 def regular(degree,nodes):
     while True:
         try:
             print('==>begin to generate Regular Graph')
             sequence = np.ones(nodes)*degree
-            # 确保度值平均度值是neighbors
+            # the degree distribution of graph is equal to sequence
             RG = nx.random_degree_sequence_graph(sequence,tries=1000000)            
             if nx.is_connected(RG):
                 matrix = np.array(nx.adjacency_matrix(RG).todense())
@@ -17,7 +18,8 @@ def regular(degree,nodes):
             print('==>loss to generate Regular Graph')
 
 
-# 生成具有脉冲分布的图,手动构建
+# Get regualr graph by hand
+# Each node is connected to degree//2 nodes on either side of it
 def first_regular_graph(degree, nodes):
 
     assert degree%2==0 and nodes%2==0

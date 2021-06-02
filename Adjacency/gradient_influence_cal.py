@@ -19,11 +19,8 @@ def gradient_infuence_cal(matrix):
         node_connect[node] = 1
         while influence!=nodes:
             temp += influence
-            # 如果是第一步,就返回node节点连接的节点
             node_connect = np.sum(matrix[node_connect==1], axis=0).reshape(-1)
-            # print(node_connect)
             node_connect = np.array(node_connect!=0)
-            # print(node_connect)
             influence = np.sum(node_connect)
             index = index + 1
             if index > 100:
@@ -77,7 +74,7 @@ def write_result_to_csv(path_to_csv,**kwargs):
 nodes = 64
 layers_num = 15
 channels = 64
-Adjancy_Nodes_Path = f'Adjacency/{nodes}'
+Adjancy_Nodes_Path = f'{nodes}'
 Adjancy_Nodes_Degrees_path = [os.path.join(Adjancy_Nodes_Path, degree) for degree in os.listdir(Adjancy_Nodes_Path)]
 
 for degree in Adjancy_Nodes_Degrees_path:
@@ -129,6 +126,3 @@ for degree in Adjancy_Nodes_Degrees_path:
     plt.ylabel('channels')
     plt.savefig(f'matrix\\{nodes}_{int(degree)}.pdf')
     plt.close()
-
-
-
