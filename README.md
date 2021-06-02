@@ -2,7 +2,11 @@
 
 This repository is the official implementation of <br/>
 **《RGP: Neural Network Pruning through its RegularGraph Structure》**
+<!-- ![alt text](images/framework.png) -->
 
+<p align="center">
+<img width="700" src="images/framework.png">
+</p>
 
 ## Setup
 
@@ -114,6 +118,12 @@ class GraphConv2D(nn.Conv2d):
 
 
 ### Expected Results and Pretrained Models
+Performance changes during graph structure search.Figure show the accuray of two models on three datasets changes when the average shortest path of graph changes.
+<!-- ![alt text](images/results.png) -->
+
+<p align="center">
+<img width="700" src="images/results.png">
+</p>
 
 You can download pretrained models pretrained on ImageNet here:
 
