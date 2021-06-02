@@ -8,6 +8,25 @@ This repository is the official implementation of <br/>
 <img width="700" src="images/framework.png">
 </p>
 
+## Simple Example
+A simple example to illustrate information transfer in graph and gradient transfer in neural
+network. We analyze node 3 and set two cases of different ASPL
+<!-- ![alt text](images/simple_example.png) -->
+
+<p align="center">
+<img width="700" src="images/simple_example.png">
+</p>
+
+## Analysis
+The statistical relationship between ```average shortest path length (ASPL), Gradient-Resistance(GR) and average output-neuron parameters usage (AOPU)```. We calculated three values on
+64-node, 4-degree regular graphs, the corresponding neural network is a 15-layer MLP, and each
+layer contains 64 neurons.
+<!-- ![alt text](images/analysis.png) -->
+
+<p align="center">
+<img width="700" src="images/analysis.png">
+</p>
+
 ## Setup
 
 1. Set up a virtualenv with python 3.7.9. You can use pyvenv or conda for this.
