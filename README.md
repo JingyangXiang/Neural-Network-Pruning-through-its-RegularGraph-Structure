@@ -2,7 +2,7 @@
 
 This repository is the official implementation of <br/>
 **《RGP: Neural Network Pruning through Its RegularGraph Structure》**
-<!-- ![alt text](images/framework.png) -->
+
 
 <p align="center">
 <img width="700" src="images/framework.png">
