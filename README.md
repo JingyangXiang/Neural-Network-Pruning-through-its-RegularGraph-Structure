@@ -2,29 +2,29 @@
 
 This repository is the official implementation of <br/>
 **《RGP: Neural Network Pruning through Its RegularGraph Structure》**
-<!-- ![alt text](images/framework.PNG) -->
+<!-- ![alt text](images/Framework.PNG) -->
 
 <p align="center">
-<img width="700" src="images/framework.PNG">
+<img width="700" src="images/Framework.PNG">
 </p>
 
 ## Simple Example
 A simple example to illustrate information transfer in graph and gradient transfer in neural
 network. We analyze node 3 and set two cases of different ASPL
-<!-- ![alt text](images/simple_example.PNG) -->
+<!-- ![alt text](images/example.PNG) -->
 
 <p align="center">
-<img width="700" src="images/simple_example.PNG">
+<img width="700" src="images/example.PNG">
 </p>
 
 ## Analysis
 The statistical relationship between ```average shortest path length (ASPL), Gradient-Resistance(GR) and average output-neuron parameters usage (AOPU)```. We calculated three values on
 64-node, 4-degree regular graphs, the corresponding neural network is a 15-layer MLP, and each
 layer contains 64 neurons.
-<!-- ![alt text](images/analysis.PNG) -->
+<!-- ![alt text](images/Analysis.PNG) -->
 
 <p align="center">
-<img width="700" src="images/analysis.PNG">
+<img width="700" src="images/Analysis.PNG">
 </p>
 
 ## Setup
@@ -138,10 +138,10 @@ class GraphConv2D(nn.Conv2d):
 
 ### Expected Results and Pretrained Models
 Performance changes during graph structure search.Figure show the accuray of two models on three datasets changes when the average shortest path of graph changes.
-<!-- ![alt text](images/results.PNG) -->
+<!-- ![alt text](images/result.PNG) -->
 
 <p align="center">
-<img width="700" src="images/results.PNG">
+<img width="700" src="images/result.PNG">
 </p>
 
 You can download pretrained models pretrained on ImageNet here:
