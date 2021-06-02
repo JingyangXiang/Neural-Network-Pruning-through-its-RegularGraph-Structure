@@ -343,6 +343,8 @@ def get_model(args):
     if os.path.isfile(args.matrix):
         print('==> load the matrix')
         args.matrix = np.load(args.matrix)
+    elif args.conv_type == 'DenseConv':
+        pass
     else:
         raise ValueError("Matrix is need to be given")
 

@@ -1,0 +1,32 @@
+# Architecture
+arch: ResNet50
+
+# ===== Dataset ===== #
+data: 
+set: ImageNetDali
+name: baseline
+
+# ===== Learning Rate Policy ======== #
+optimizer: sgd
+lr: 0.1
+lr_policy: multistep_lr
+num_classes: 1000
+
+# ===== Network training config ===== #
+epochs: 100
+weight_decay: 0.0001
+momentum: 0.9
+batch_size: 256
+seed: 2021
+trainer: amp_dali
+label_smoothing: 0.1
+
+# ===== Sparsity =========== #
+conv_type: GraphConv2D
+norm_type: LearnedBatchNorm
+init: kaiming_normal
+mode: fan_in
+nonlinearity: relu
+
+# ===== Hardware setup ===== #
+workers: 16

@@ -138,6 +138,10 @@ You can download pretrained models pretrained on ImageNet here:
 
 ## Matrix
 You can find details of adjacency matrix in the ```Adjacency/*/*/*.csv```,the informations of average shortest path, clustering coefficient and transitivity.
+
+## License
+
+**RPG** is released under the MIT license. Please see the [LICENSE](LICENSE) file for more information.
 ## Requirements
 
 Python 3.7.9, CUDA Version 10.1,CUDNN Version 7.6.5:
