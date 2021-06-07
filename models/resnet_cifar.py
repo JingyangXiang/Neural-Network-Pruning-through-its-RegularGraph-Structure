@@ -74,7 +74,7 @@ class ResNet(nn.Module):
         if args.first_layer_dense:
             self.conv1 = nn.Conv2d(3, base_width, 3, 1, 1, bias=False)
         else:
-            self.conv1 = builder.conv3x3(3, base_width, stride=1, first_layer=True)
+            self.conv1 = builder.conv3x3(3, base_width, stride=1)
         self.bn1 = builder.norm(base_width)
         self.layer1 = self._make_layer(block, base_width, num_blocks[0], stride=1)
         self.layer2 = self._make_layer(block, base_width*2, num_blocks[1], stride=2)

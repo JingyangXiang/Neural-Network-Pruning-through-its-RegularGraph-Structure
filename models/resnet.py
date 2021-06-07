@@ -99,7 +99,7 @@ class ResNet(nn.Module):
                 3, self.inplanes, kernel_size=7, stride=2, padding=3, bias=False
             )
         else:
-            self.conv1 = builder.conv7x7(3, 64, stride=2, first_layer=True)
+            self.conv1 = builder.conv7x7(3, 64, stride=2)
 
         self.bn1 = builder.norm(64)
         self.relu = builder.activation()

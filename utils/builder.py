@@ -62,24 +62,24 @@ class Builder(object):
 
         return conv
 
-    def conv3x3(self, in_planes, out_planes, stride=1, first_layer=False):
+    def conv3x3(self, in_planes, out_planes, stride=1):
         """3x3 convolution with padding"""
-        c = self.conv(3, in_planes, out_planes, stride=stride, first_layer=first_layer)
+        c = self.conv(3, in_planes, out_planes, stride=stride)
         return c
 
-    def conv1x1(self, in_planes, out_planes, stride=1, first_layer=False):
+    def conv1x1(self, in_planes, out_planes, stride=1):
         """1x1 convolution with padding"""
-        c = self.conv(1, in_planes, out_planes, stride=stride, first_layer=first_layer)
+        c = self.conv(1, in_planes, out_planes, stride=stride)
         return c
 
-    def conv7x7(self, in_planes, out_planes, stride=1, first_layer=False):
+    def conv7x7(self, in_planes, out_planes, stride=1):
         """7x7 convolution with padding"""
-        c = self.conv(7, in_planes, out_planes, stride=stride, first_layer=first_layer)
+        c = self.conv(7, in_planes, out_planes, stride=stride)
         return c
 
-    def conv5x5(self, in_planes, out_planes, stride=1, first_layer=False):
+    def conv5x5(self, in_planes, out_planes, stride=1):
         """5x5 convolution with padding"""
-        c = self.conv(5, in_planes, out_planes, stride=stride, first_layer=first_layer)
+        c = self.conv(5, in_planes, out_planes, stride=stride)
         return c
 
     def norm(self, planes):
