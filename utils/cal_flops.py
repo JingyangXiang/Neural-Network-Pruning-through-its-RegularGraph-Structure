@@ -1,14 +1,18 @@
 # -*- coding:utf8 -*-
+import os
+import time
+import pathlib
+import numpy as np
+
+import torch
+
 from args import args
 args.conv_type = "DenseConv"
 args.norm_type = "NonAffineBatchNorm"
-import numpy as np
-import os
-import torch
-import time
 
-import pathlib
+
 import models
+
 
 
 def print_model_param_flops(model=None, input_res=224, multiply_adds=True,nodes=64,degree=64):
@@ -144,10 +148,6 @@ def write_to_csv(**kwargs):
         )
 
 
-
-
-
-
 def get_class(name):
 
     if name in ['CIFAR10', 'SVHN']:
@@ -163,6 +163,7 @@ def get_class(name):
 
     return classes
 
+
 def get_size(name):
     if name in ['CIFAR10', 'SVHN', 'CIFAR100']:
         size = 32
@@ -171,12 +172,9 @@ def get_size(name):
     return size
 
 
-
-##########################################################################################
 datas = ['CIFAR10', 'SVHN', 'CIFAR100']
 models_name = ["cResNet18", "vgg16_bn"]
 degrees = [4, 6, 8, 10, 12, 14, 16, 18, 20, 64]
-
 nodes = 64
 
 for data in datas:
@@ -200,7 +198,7 @@ for data in datas:
                 size=size
             )
 
-##########################################################################################
+
 data2s = ['TinyImageNet','ImageNet']
 models_name = ["ResNet18", "vgg16_bn", "ResNet50"]
 for data2 in data2s:
@@ -224,9 +222,9 @@ for data2 in data2s:
                 size=size
             )
 
-##########################################################################################
+
 datas = ['CIFAR10', 'SVHN', 'CIFAR100']
-models_name = ["resnet_56", ]
+models_name = ["resnet56", ]
 degrees = [4,6,8,10,12,16]
 
 nodes = 16
@@ -251,4 +249,3 @@ for data in datas:
                 flops=round(flops * 1e-6, 2),
                 size=size
             )
-##########################################################################################
