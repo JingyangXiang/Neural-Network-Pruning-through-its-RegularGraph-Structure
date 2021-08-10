@@ -10,7 +10,7 @@ class HybridTrainPipe(Pipeline):
     def __init__(self, batch_size, num_threads, device_id, data_dir, crop):
         super(HybridTrainPipe, self).__init__(batch_size, num_threads, device_id, seed=12 + device_id)
         dali_device = "gpu"
-        self.input = ops.readers.File(file_root=data_dir, shard_id=args.local_rank, num_shards=args.world_size, random_shuffle=True)
+        self.input = ops.readers.File(file_root=data_dir, shard_id=0, num_shards=1, random_shuffle=True)
         self.decode = ops.decoders.Image(device="mixed")
         self.res = ops.RandomResizedCrop(device="gpu", size=crop, random_area=[0.08, 1.25])
         self.cmnp = ops.CropMirrorNormalize(device="gpu",
@@ -34,7 +34,7 @@ class HybridTrainPipe(Pipeline):
 class HybridValPipe(Pipeline):
     def __init__(self, batch_size, num_threads, device_id, data_dir, crop, size):
         super(HybridValPipe, self).__init__(batch_size, num_threads, device_id, seed=12 + device_id)
-        self.input = ops.readers.File(file_root=data_dir, shard_id=args.local_rank, num_shards=args.world_size,
+        self.input = ops.readers.File(file_root=data_dir, shard_id=0, num_shards=1,
                                     random_shuffle=False)
         self.decode = ops.decoders.Image(device="mixed")
         self.res = ops.Resize(device="gpu", resize_shorter=size, interp_type=types.INTERP_TRIANGULAR)
@@ -87,7 +87,7 @@ class ImageNetDali:
             batch_size=args.batch_size,
             num_threads=args.workers,
             crop=224,
-            device_id=0,
+            device_id=args.multigpu[0],
             num_gpus=1
         )
         self.val_loader = get_imagenet_iter_dali(
@@ -96,6 +96,6 @@ class ImageNetDali:
             batch_size=args.batch_size,
             num_threads=args.workers,
             crop=224,
-            device_id=0,
+            device_id=args.multigpu[0],
             num_gpus=1
         )

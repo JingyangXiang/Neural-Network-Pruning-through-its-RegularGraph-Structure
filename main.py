@@ -332,11 +332,12 @@ def get_model(args):
     if args.freeze_weights:
         freeze_model_weights(model)
 
-    if os.path.isfile(args.matrix):
+
+    if args.conv_type == 'DenseConv':
+        pass
+    elif os.path.isfile(args.matrix):
         print('==> load the matrix')
         args.matrix = np.load(args.matrix)
-    elif args.conv_type == 'DenseConv':
-        pass
     else:
         raise ValueError("Matrix is need to be given")
 
@@ -401,6 +402,12 @@ def get_optimizer(args, model):
         optimizer = torch.optim.Adamax(
             filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr,
             weight_decay=args.weight_decay
+        )
+    elif args.optimizer == "rmsprop":
+        optimizer = torch.optim.RMSprop(
+            filter(lambda p: p.requires_grad, model.parameters()), lr=args.lr,
+            weight_decay=args.weight_decay,
+            momentum=args.momentum
         )
 
     return optimizer
@@ -477,7 +484,6 @@ def write_result_to_csv(**kwargs):
             "Optimizer, "
             "WeightDecay, "
             "Run Base Dir, "
-            "Arch, , "
             "Linear Type\n"
         )
 
